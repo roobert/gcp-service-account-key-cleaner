@@ -7,7 +7,7 @@ from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
 
 
-# when triggered by cloud function, disregard topic data..
+# when triggered as cloud function, disregard topic data..
 def main(_event, _context):
     gcp_service_account_key_cleaner()
 
