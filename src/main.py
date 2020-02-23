@@ -32,7 +32,9 @@ class GCPServiceAccount:
 
     def __post_init__(self):
         credentials = GoogleCredentials.get_application_default()
-        self.service = discovery.build("iam", "v1", credentials=credentials)
+        self.service = discovery.build(
+            "iam", "v1", credentials=credentials, cache_discovery=False
+        )
 
     def delete_key(self, key_name):
         request = self.service.projects().serviceAccounts().keys().delete(name=key_name)
