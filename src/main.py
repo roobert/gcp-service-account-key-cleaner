@@ -15,8 +15,7 @@ def main(_event, _context):
 def gcp_service_account_key_cleaner():
     try:
         service_account = GCPServiceAccount(
-            email=os.environ["SERVICE_ACCOUNT_EMAIL"],
-            expire_after_minutes=os.environ["EXPIRE_AFTER_MINUTES"],
+            email=os.environ["SERVICE_ACCOUNT_EMAIL"], ttl=os.environ["TIME_TO_LIVE"],
         )
     except KeyError as error:
         raise KeyError(f"environment variable not set: {error}")
@@ -27,7 +26,7 @@ def gcp_service_account_key_cleaner():
 @dataclass
 class GCPServiceAccount:
     email: str
-    expire_after_minutes: str
+    ttl: str
     service: None = field(init=False)
 
     def __post_init__(self):
@@ -59,14 +58,14 @@ class GCPServiceAccount:
             )
             key_age = datetime.now() - key_creation_time
 
-            if key_age > timedelta(minutes=int(self.expire_after_minutes)):
+            if key_age > timedelta(minutes=int(self.ttl)):
                 print(
-                    f"[delete] id: {key_id}, age: {key_age} [expire after: {self.expire_after_minutes}m]"
+                    f"[delete] id: {key_id}, age: {key_age} [time to live: {self.ttl}m]"
                 )
                 self.delete_key(key["name"])
             else:
                 print(
-                    f"[keep]   id: {key_id}, age: {key_age} [expire after: {self.expire_after_minutes}m]"
+                    f"[keep]   id: {key_id}, age: {key_age} [time to live: {self.ttl}m]"
                 )
 
 
