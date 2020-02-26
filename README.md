@@ -6,5 +6,5 @@ This can be useful when using Vault to issue service account keys since there is
 
 ## Example
 ```
-SERVICE_ACCOUNT_EMAIL="<service account email>" TIME_TO_LIVE="20" ./src/main.py
+SERVICE_ACCOUNT_EMAIL="<service account email>" TIME_TO_LIVE_MINUTES="20" ./src/main.py
 ```

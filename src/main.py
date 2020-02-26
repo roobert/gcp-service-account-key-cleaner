@@ -15,7 +15,8 @@ def main(_event, _context):
 def gcp_service_account_key_cleaner():
     try:
         service_account = GCPServiceAccount(
-            email=os.environ["SERVICE_ACCOUNT_EMAIL"], ttl=os.environ["TIME_TO_LIVE"],
+            email=os.environ["SERVICE_ACCOUNT_EMAIL"],
+            ttl_minutes=os.environ["TIME_TO_LIVE_MINUTES"],
         )
     except KeyError as error:
         raise KeyError(f"environment variable not set: {error}")
@@ -26,7 +27,7 @@ def gcp_service_account_key_cleaner():
 @dataclass
 class GCPServiceAccount:
     email: str
-    ttl: str
+    ttl_minutes: str
     service: None = field(init=False)
 
     def __post_init__(self):
@@ -58,14 +59,14 @@ class GCPServiceAccount:
             )
             key_age = datetime.now() - key_creation_time
 
-            if key_age > timedelta(minutes=int(self.ttl)):
+            if key_age > timedelta(minutes=int(self.ttl_minutes)):
                 print(
-                    f"[delete] id: {key_id}, age: {key_age} [time to live: {self.ttl}m]"
+                    f"[delete] id: {key_id}, age: {key_age} [time to live: {self.ttl_minutes}m]"
                 )
                 self.delete_key(key["name"])
             else:
                 print(
-                    f"[keep]   id: {key_id}, age: {key_age} [time to live: {self.ttl}m]"
+                    f"[keep]   id: {key_id}, age: {key_age} [time to live: {self.ttl_minutes}m]"
                 )
 
 
